@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "name": "penpot-devtools",
+  "description": "Penpot DevTools",
+  "icons": {
+    "16": "dist/icons/16.png",
+    "32": "dist/icons/32.png",
+    "48": "dist/icons/48.png",
+    "128": "dist/icons/128.png"
+  },
+  "devtools_page": "devtools.html",
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["http://localhost:3449/*", "http://design.penpot.dev/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["fonts/*.woff2", "fonts/*.woff", "fonts/*.ttf"],
+      "matches": ["http://localhost:3449/*", "http://design.penpot.dev/*"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:3449/*", "http://design.penpot.dev/*"],
+      "world": "ISOLATED",
+      "js": ["content-scripts/isolated.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
