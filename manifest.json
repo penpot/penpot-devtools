@@ -17,13 +17,5 @@
       "resources": ["fonts/*.woff2", "fonts/*.woff", "fonts/*.ttf"],
       "matches": ["http://localhost:3449/*", "http://design.penpot.dev/*"]
     }
-  ],
-  "content_scripts": [
-    {
-      "matches": ["http://localhost:3449/*", "http://design.penpot.dev/*"],
-      "world": "ISOLATED",
-      "js": ["content-scripts/isolated.js"],
-      "run_at": "document_start"
-    }
   ]
 }

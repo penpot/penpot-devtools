@@ -8,7 +8,7 @@ export const useOptionsStore = defineStore('options', () => {
 
   async function toggle(option) {
     try {
-      await sendMessage('toggle-debug', option.id)
+      await sendMessage('debug:toggle', option.id)
       const opt = options.value.find((o) => o.id === option.id)
       if (opt) {
         opt.enabled = !opt.enabled
@@ -23,7 +23,6 @@ export const useOptionsStore = defineStore('options', () => {
   function init({ options: debugOptions, state: debugState }) {
     options.value = debugOptions.map((option) => {
       const isEnabled = debugState.includes(option)
-      console.log('debug option', option, isEnabled)
       return {
         id: option,
         enabled: isEnabled,
@@ -31,10 +30,20 @@ export const useOptionsStore = defineStore('options', () => {
     })
   }
 
+  async function refresh() {
+    try {
+      const payload = await sendMessage('debug:refresh')
+      init(payload)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return {
     options,
     init,
     toggle,
+    refresh
   }
 })
 

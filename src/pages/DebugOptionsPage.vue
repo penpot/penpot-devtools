@@ -1,12 +1,15 @@
 <script setup>
-import { useOptionsStore } from '~/stores/options';
+import { onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useOptionsStore } from '~/stores/options'
 import PageContainer from '~/components/PageContainer.vue'
 import DebugOption from '~/components/DebugOption.vue'
-import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
 const optionsStore = useOptionsStore()
+
+onMounted(() => optionsStore.refresh())
 </script>
 
 <template>

@@ -31,23 +31,25 @@ export const useStateStore = defineStore('state', () => {
   async function tryResolve(item) {
     try {
       const payload = await sendMessage('state', item.id)
-      console.log('Resolved', payload)
-      if (payload?.type)
-        item.type = payload.type
-      if (payload?.value)
-        item.value = payload.value
-      if (payload?.children)
-        item.children = payload.children
-      if (payload?.isExpandable)
-        item.isExpandable = payload.isExpandable
-      item.state = 'loaded'
-      console.log('Assigning to item', item)
+      if (item) {
+        if (payload?.type)
+          item.type = payload.type
+        if (payload?.value)
+          item.value = payload.value
+        if (payload?.children)
+          item.children = payload.children
+        if (payload?.isExpandable)
+          item.isExpandable = payload.isExpandable
+        item.state = 'loaded'
+      }
     } catch (error) {
-      item.type = 'error'
-      item.value = error.message
-      item.children = []
-      item.isExpandable = false
-      item.state = 'error'
+      if (item) {
+        item.type = 'error'
+        item.value = error.message
+        item.children = []
+        item.isExpandable = false
+        item.state = 'error'
+      }
     }
   }
 

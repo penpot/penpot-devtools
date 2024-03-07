@@ -247,7 +247,7 @@ if (!('penpotDevTools' in window)) {
    */
   function tryGetPartialStateAndRespond(path, id) {
     const [status, payload] = tryGetPartialState(path)
-    sendMessage(status, payload, id)
+    trySendMessage(status, payload, id)
     return payload
   }
 
@@ -258,9 +258,7 @@ if (!('penpotDevTools' in window)) {
    */
   function getDebugOptions() {
     try {
-      const options = cljs.core.clj__GT_js(app.util.debug.options)
-      console.log('options', options)
-      return options
+      return cljs.core.clj__GT_js(app.util.debug.options)
     } catch (error) {
       console.error(error)
     }
@@ -273,9 +271,7 @@ if (!('penpotDevTools' in window)) {
    */
   function getDebugState() {
     try {
-      const state = cljs.core.clj__GT_js(cljs.core.deref(app.util.debug.state))
-      console.log('state', state)
-      return state
+      return cljs.core.clj__GT_js(cljs.core.deref(app.util.debug.state))
     } catch (error) {
       console.error(error)
     }
@@ -358,10 +354,9 @@ if (!('penpotDevTools' in window)) {
    * (success o failure) y el resultado.
    *
    * @param {string} code
-   * @param {string} id
    * @returns {Promise<[string, *]>}
    */
-  async function tryEval(code, id) {
+  async function tryEval(code) {
     try {
       const result = await evalClojureScript(code)
       return ['success', result]
@@ -382,8 +377,23 @@ if (!('penpotDevTools' in window)) {
    */
   async function tryEvalAndRespond(code, id) {
     const [status, payload] = await tryEval(code)
-    sendMessage(status, payload, id)
+    trySendMessage(status, payload, id)
     return payload
+  }
+
+  function toggleDebugOption(option) {
+    app.util.debug.toggle_BANG_(cljs.core.keyword(option))
+    app.main.reinit(true)
+  }
+
+  function tryToggleDebugOption(option) {
+    try {
+      toggleDebugOption(option)
+      return ['success', cljs.core.clj__GT_js(cljs.core.deref(app.util.debug.state))]
+    } catch (error) {
+      console.error(error)
+      return ['failure', error.message]
+    }
   }
 
   /**
@@ -406,6 +416,25 @@ if (!('penpotDevTools' in window)) {
   }
 
   /**
+   * Esta función se encarga de enviar mensajes al contexto
+   * aislado de las Penpot DevTools y en caso de error
+   * devuelve false.
+   *
+   * @param {string} type
+   * @param {*} payload
+   * @param {*} [id]
+   */
+  function trySendMessage(type, payload, id) {
+    try {
+      sendMessage(type, payload, id)
+      return true
+    } catch (error) {
+      console.error(error)
+      return false
+    }
+  }
+
+  /**
    * DevTools de penpot.
    */
   window.penpotDevTools = {
@@ -421,7 +450,8 @@ if (!('penpotDevTools' in window)) {
     areAvailable,
     evalClojureScript,
     tryEval,
-    sendMessage
+    sendMessage,
+    trySendMessage
   }
 
   /**
@@ -434,28 +464,26 @@ if (!('penpotDevTools' in window)) {
 
     if (e.data.type === 'eval') {
       tryEvalAndRespond(e.data.payload, e.data.id)
-    } else if (e.data.type === 'toggle-debug') {
-      tryEvalAndRespond(
-        `(do (app.util.debug/toggle! :${e.data.payload}) (js* "app.main.reinit(true)"))`
-      )
+    } else if (e.data.type === 'debug:toggle') {
+      const [status, payload] = tryToggleDebugOption(e.data.payload)
+      trySendMessage(status, payload, e.data.id)
+      // tryEvalAndRespond(`(do (app.util.debug/toggle! :${e.data.payload}) (js* "app.main.reinit(true)"))`, e.data.id)
+    } else if (e.data.type === 'debug:refresh') {
+      const options = getDebugOptions()
+      const state = getDebugState()
+      trySendMessage('debug', { options, state }, e.data.id)
     } else if (e.data.type === 'state') {
       tryGetPartialStateAndRespond(e.data.payload, e.data.id)
-    } else if (e.data.type === 'reconnected') {
-      const payload = areAvailable()
-      if (payload) {
-        // Necesitamos reenviar el mensaje de ready
-        // porque necesitamos volver a mandar el estado de las opciones de
-        // debug.
-        sendMessage('ready', payload)
-      }
     }
   })
 }
 
-// Mandamos un mensaje de que estamos "ready"
-// tan pronto como se ejecute este código en el
-// contexto principal de la aplicación.
-const payload = window.penpotDevTools.areAvailable()
-if (payload) {
-  window.penpotDevTools.sendMessage('ready', payload)
+{
+  // Mandamos un mensaje de que estamos "ready"
+  // tan pronto como se ejecute este código en el
+  // contexto principal de la aplicación.
+  const payload = window.penpotDevTools.areAvailable()
+  if (payload) {
+    window.penpotDevTools.trySendMessage('ready', payload)
+  }
 }

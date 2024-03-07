@@ -1,66 +1,18 @@
 /* eslint-disable */
 if (!('penpotDevTools' in window)) {
   /**
-   * Clase que nos permite manejar el temporizador
-   * de reconexión con las DevTools.
-   */
-  class ReconnectionTimer {
-    #callback = null
-    #timeoutId = null
-    #timeout = 1000
-    #timeoutTryIncrement = 1000
-    #maxTimeout = 5000
-
-    constructor(callback, options) {
-      this.#callback = callback
-      this.#timeout = options?.timeout ?? 1000
-      this.#maxTimeout = options?.maxTimeout ?? 5000
-      this.#timeoutTryIncrement = options?.timeoutTryIncrement ?? 1000
-      this.#timeoutId = null
-    }
-
-    #onTimeout = () => {
-      try {
-        this.#callback()
-      } catch (error) {
-        this.#tryAgain()
-      }
-    }
-
-    #tryAgain() {
-      if (this.#timeout < this.#maxTimeout) {
-        this.#timeout += this.#timeoutTryIncrement
-      }
-      this.#request()
-    }
-
-    #cancel() {
-      if (this.#timeoutId) {
-        clearTimeout(this.#timeoutId)
-      }
-    }
-
-    #request(callback) {
-      this.#timeoutId = setTimeout(callback, this.#timeout)
-    }
-
-    stop() {
-      this.#cancel()
-    }
-
-    start() {
-      this.#cancel()
-      this.#request(this.#onTimeout)
-    }
-  }
-
-  /**
    * Configuramos el puerto que se nos pasa
    * para poder intercambiar mensajes con las DevTools.
    *
    * @param {chrome.runtime.Port} port
    */
   function setupPort(port) {
+    // Renovamos el puerto y desconectamos el anterior.
+    if (ports.has(port.name)) {
+      const port = ports.get(port.name)
+      port.disconnect()
+    }
+
     ports.set(port.name, port)
 
     /**
@@ -95,40 +47,40 @@ if (!('penpotDevTools' in window)) {
     port.onDisconnect.addListener(() => {
       ports.delete(port.name)
       window.removeEventListener('message', onMessage)
-      reconnectionTimer.start()
+    })
+
+    port.postMessage({
+      source: 'penpot-devtools:bridge',
+      type: 'connected',
+      payload: {},
     })
   }
 
-  /**
-   * Intentamos reconectar el puerto del chrome.runtime.
-   */
-  function reconnect() {
-    port = chrome.runtime.connect({ name: 'penpot-devtools:bridge' })
-    // Reconfiguramos el puerto.
+  chrome.runtime.onConnect.addListener((port) => {
+    console.log('Port connected', port.name)
+    if (port.name !== 'penpot-devtools:devtools') return
+    console.log('Setting up port')
     setupPort(port)
-    // Enviamos un mensaje de reconexión a las DevTools.
-    window.postMessage({
-      source: 'penpot-devtools:bridge',
-      type: 'reconnected',
-    })
+  })
+
+  function tryConnect() {
+    try {
+      const port = chrome.runtime.connect({ name: 'penpot-devtools:bridge' })
+      setupPort(port)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const ports = new Map()
-  const reconnectionTimer = new ReconnectionTimer(reconnect)
 
   // Utilizamos el objeto global para almacenar
   // los puertos y el temporizador de reconexión.
   // Y para poder comprobar si se inyectó este código
   // en el contexto aislado de la página.
   window.penpotDevTools = {
-    ports,
-    reconnectionTimer,
+    ports
   }
 
-  try {
-    let port = chrome.runtime.connect({ name: 'penpot-devtools:bridge' })
-    setupPort(port)
-  } catch (error) {
-    reconnectionTimer.start()
-  }
+  tryConnect()
 }
