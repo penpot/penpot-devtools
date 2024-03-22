@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useStatusStore = defineStore('status', () => {
-  const status = ref('connected')
+  const status = ref('disconnected')
 
   function connected() {
     status.value = 'connected'

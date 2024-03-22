@@ -8,13 +8,13 @@ export const useREPLStore = defineStore('repl', () => {
   const result = shallowRef(null)
 
   function historyUp() {
-    if (historyIndex.value <= 0) return
+    if (historyIndex.value <= 0) return history[historyIndex.value]
     historyIndex.value--
     return history[historyIndex.value]
   }
 
   function historyDown() {
-    if (historyIndex.value >= history.length - 1) return
+    if (historyIndex.value >= history.length - 1) return history[historyIndex.value]
     historyIndex.value++
     return history[historyIndex.value]
   }

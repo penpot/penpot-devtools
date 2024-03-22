@@ -26,3 +26,5 @@ dist-ssr
 # Videos
 *.mp4
 *.webm
+
+coverage

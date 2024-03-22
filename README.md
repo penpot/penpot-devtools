@@ -1,6 +1,6 @@
 # Penpot DevTools
 
-## What you can do?
+## What you can do
 
 1. Use a ClojureScript REPL with direct access to app's current state.
 
@@ -22,8 +22,7 @@
 
 ## Known issues
 
-1. Sometimes the DevTools panel gets disconnected from the main context.
-2. Sometimes toggling options doesn't work.
+1. Sometimes the DevTools panel gets disconnected from the main context (you can Reload frame inside DevTools to fix this).
 
 ## Initialization
 
@@ -79,6 +78,9 @@ If you modify a `content-script` or one of the main extension files: `devtools.h
 When you modify something related to the panel UI (anything inside the `src` folder), you need to rebuild the project and refresh (as explained in the previous entry).
 
 ```sh
-pnpm run build
+corepack enable pnpm
+pnpm install
+pnpm build
 ```
 
+If you need to debug the UI you can use `pnpm build:dev` to build it in `development` mode.

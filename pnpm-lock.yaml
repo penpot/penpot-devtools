@@ -40,6 +40,9 @@ devDependencies:
   '@intlify/unplugin-vue-i18n':
     specifier: ^2.0.0
     version: 2.0.0(vue-i18n@9.10.1)
+  '@pinia/testing':
+    specifier: ^0.1.3
+    version: 0.1.3(pinia@2.1.7)(vue@3.4.21)
   '@vitejs/plugin-vue':
     specifier: ^5.0.4
     version: 5.0.4(vite@5.1.5)(vue@3.4.21)
@@ -727,6 +730,18 @@ packages:
 
   /@one-ini/wasm@0.1.1:
     resolution: {integrity: sha512-XuySG1E38YScSJoMlqovLru4KTUNSjgVTIjyh7qMX6aNN5HY5Ct5LhRJdxO79JtTzKfzV/bnWpz+zquYrISsvw==}
+    dev: true
+
+  /@pinia/testing@0.1.3(pinia@2.1.7)(vue@3.4.21):
+    resolution: {integrity: sha512-D2Ds2s69kKFaRf2KCcP1NhNZEg5+we59aRyQalwRm7ygWfLM25nDH66267U3hNvRUOTx8ofL24GzodZkOmB5xw==}
+    peerDependencies:
+      pinia: '>=2.1.5'
+    dependencies:
+      pinia: 2.1.7(vue@3.4.21)
+      vue-demi: 0.14.7(vue@3.4.21)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
     dev: true
 
   /@pkgjs/parseargs@0.11.0:
@@ -2129,7 +2144,6 @@ packages:
       '@vue/devtools-api': 6.6.1
       vue: 3.4.21
       vue-demi: 0.14.7(vue@3.4.21)
-    dev: false
 
   /pkg-types@1.0.3:
     resolution: {integrity: sha512-nN7pYi0AQqJnoLPC9eHFQ8AcyaixBUOwvqc5TDnIKCMEE6I0y8P7OKA7fPexsXGCGxQDl/cmrLAp26LhcwxZ4A==}
@@ -2595,7 +2609,6 @@ packages:
         optional: true
     dependencies:
       vue: 3.4.21
-    dev: false
 
   /vue-eslint-parser@9.4.2(eslint@8.57.0):
     resolution: {integrity: sha512-Ry9oiGmCAK91HrKMtCrKFWmSFWvYkpGglCeFAIqDdr9zdXmMMpJOmUJS7WWsW7fX81h6mwHmUZCQQ1E0PkSwYQ==}
