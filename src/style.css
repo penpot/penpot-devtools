@@ -75,6 +75,18 @@ body,
   place-items: center;
 }
 
+body::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
+/* body::-webkit-scrollbar-track { } */
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--db-quaternary);
+  outline: 0;
+}
+
 #app {
   display: grid;
   grid-template-rows: 3rem 1fr;

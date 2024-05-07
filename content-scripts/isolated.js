@@ -45,6 +45,7 @@ if (!('penpotDevTools' in window)) {
      * Manejamos la desconexión del puerto.
      */
     port.onDisconnect.addListener(() => {
+      console.log('Port disconnected', port.name)
       ports.delete(port.name)
       window.removeEventListener('message', onMessage)
     })

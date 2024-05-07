@@ -113,6 +113,7 @@ function setupPort(port) {
   })
 
   port.onDisconnect.addListener(() => {
+    console.log('Port disconnected')
     state.port = null
     sendToPanel({
       source: 'penpot-devtools:devtools',

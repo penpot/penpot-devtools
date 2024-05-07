@@ -140,13 +140,19 @@ if (!('penpotDevTools' in window)) {
    */
 
   /**
+   * @typedef {object} GetPartialStateOptions
+   * @property {boolean} [sorted=true]
+   */
+
+  /**
    * Obtiene el estado parcil de la aplicación a partir
    * de una ruta concreta.
    *
    * @param {string} path
+   * @param {GetPartialStateOptions} [options]
    * @returns {StateItem}
    */
-  function getPartialState(path) {
+  function getPartialState(path, options) {
     const state = cljs.core.deref(app.main.store.state)
     const statePath = getPath(path)
     const data = cljs.core.get_in(state, statePath)
@@ -201,6 +207,14 @@ if (!('penpotDevTools' in window)) {
         })
       }
 
+      if (options?.sorted ?? true) {
+        children.sort((a, b) => {
+          if (a?.name?.localeCompare && b?.name?.localeCompare)
+            return a.name.localeCompare(b.name)
+          return 0
+        })
+      }
+
       return createStateItem({
         id: path,
         type,
@@ -247,7 +261,9 @@ if (!('penpotDevTools' in window)) {
    */
   function tryGetPartialStateAndRespond(path, id) {
     const [status, payload] = tryGetPartialState(path)
-    trySendMessage(status, payload, id)
+    if (!trySendMessage(status, payload, id)) {
+      trySendMessage('failure', 'Failed to retrieve partial state', id)
+    }
     return payload
   }
 
