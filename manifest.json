@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "penpot-devtools",
   "description": "Penpot DevTools",
   "icons": {
@@ -14,7 +14,7 @@
   "host_permissions": ["http://localhost:3449/*", "http://design.penpot.dev/*"],
   "web_accessible_resources": [
     {
-      "resources": ["fonts/*.woff2", "fonts/*.woff", "fonts/*.ttf"],
+      "resources": ["dist/assets/fonts/*.woff2", "dist/assets/fonts/*.woff", "dist/assets/fonts/*.ttf"],
       "matches": ["http://localhost:3449/*", "http://design.penpot.dev/*"]
     }
   ]

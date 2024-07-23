@@ -2,7 +2,7 @@
   "name": "penpot-devtools",
   "description": "Penpot Devtools",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "packageManager": "pnpm@8.10.0",
   "engines": {

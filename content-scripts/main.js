@@ -115,6 +115,12 @@ if (!('penpotDevTools' in window)) {
       })
   }
 
+  /**
+   * Returns the name of a key.
+   *
+   * @param {*} key
+   * @returns {string}
+   */
   function getKeyName(key) {
     if (cljs.core.uuid_QMARK_(key)) {
       return '#' + cljs.core.name(key)
@@ -168,24 +174,28 @@ if (!('penpotDevTools' in window)) {
               const value = cljs.core.nth(entry, 1)
               const type = getType(value)
               const repValue = getValue(value, type)
+              const isTransferable = isValueTransferable(repValue)
               const isExpandable = isTypeExpandable(type)
               return createStateItem({
                 id: path + PATH_SEPARATOR + name,
                 name,
                 type,
-                value: isExpandable ? null : repValue,
+                value: isExpandable || !isTransferable ? null : repValue,
+                isTransferable: isTransferable,
                 isExpandable: isExpandable,
               })
             } else {
               const value = entry
               const type = getType(value)
               const repValue = getValue(value, type)
+              const isTransferable = isValueTransferable(repValue)
               const isExpandable = isTypeExpandable(type)
               return createStateItem({
                 id: path + PATH_SEPARATOR + getKeyName(index),
                 name: index,
                 type,
-                value: isExpandable ? null : repValue,
+                value: isExpandable || !isTransferable ? null : repValue,
+                isTransferable: isTransferable,
                 isExpandable: isExpandable,
               })
             }
@@ -195,13 +205,15 @@ if (!('penpotDevTools' in window)) {
         children = Object.entries(data).map(([key, value]) => {
           const type = getType(value)
           const repValue = getValue(value, type)
+          const isTransferable = isValueTransferable(repValue)
           const isExpandable = isTypeExpandable(type)
           return createStateItem({
             id: path + PATH_SEPARATOR + key,
             name: key,
             type,
-            value: isExpandable ? null : repValue,
+            value: isExpandable || !isTransferable ? null : repValue,
             state: isExpandable ? 'unloaded' : 'loaded',
+            isTransferable: isTransferable,
             isExpandable: isExpandable,
           })
         })
@@ -220,20 +232,54 @@ if (!('penpotDevTools' in window)) {
         type,
         children,
         value: undefined,
+        isTransferable: true,
         isExpanded: true,
         isExpandable: true,
       })
     }
 
+    const isTransferable = isValueTransferable(repValue)
     const repValue = getValue(data, type)
     return createStateItem({
       id: path,
       type: type,
       children: [],
       value: repValue,
+      isTransferable: isTransferable,
       isExpanded: false,
       isExpandable: false,
     })
+  }
+
+  // This is a dummy iframe used to test if something
+  // can be transferred or not through `postMessage`.
+  const iframe = document.createElement('iframe')
+  iframe.hidden = true
+  iframe.ariaHidden = true
+  document.body.appendChild(iframe)
+
+  /**
+   * Returns if a value is transferable or not.
+   *
+   * @param {*} value
+   * @returns {boolean}
+   */
+  function isValueTransferable(value) {
+    if (typeof value === 'object' && value === null) return true
+    if (typeof value === 'number') return true
+    if (typeof value === 'string') return true
+    if (typeof value === 'boolean') return true
+    if (value instanceof Date) return true
+    if (value instanceof File) return true
+    if (value instanceof FileList) return true
+    if (value instanceof Blob) return true
+    if (value instanceof ArrayBuffer) return true
+    try {
+      iframe.contentWindow.postMessage(value, null)
+      return true
+    } catch (error) {
+      return false
+    }
   }
 
   /**
