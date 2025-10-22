@@ -1,18 +1,20 @@
 /* eslint-disable */
+console.log('cljs', globalThis?.cljs)
+
 // Si las DevTools no están definidas
 // pasamos a definirlas.
 if (!('penpotDevTools' in window)) {
   const PATH_SEPARATOR = '/'
 
   const typeTable = {
-    'app:datetime': app.util.time.datetime_QMARK_,
-    'cljs:uuid': cljs.core.uuid_QMARK_,
-    'cljs:keyword': cljs.core.keyword_QMARK_,
-    'cljs:vector': cljs.core.vector_QMARK_,
-    'cljs:list': cljs.core.list_QMARK_,
-    'cljs:map': cljs.core.map_QMARK_,
-    'cljs:set': cljs.core.set_QMARK_,
-    'cljs:symbol': cljs.core.symbol_QMARK_,
+    'app:datetime': globalThis?.app?.util?.time?.datetime_QMARK_,
+    'cljs:uuid': globalThis?.cljs?.core?.uuid_QMARK_,
+    'cljs:keyword': globalThis?.cljs?.core?.keyword_QMARK_,
+    'cljs:vector': globalThis?.cljs?.core?.vector_QMARK_,
+    'cljs:list': globalThis?.cljs?.core?.list_QMARK_,
+    'cljs:map': globalThis?.cljs?.core?.map_QMARK_,
+    'cljs:set': globalThis?.cljs?.core?.set_QMARK_,
+    'cljs:symbol': globalThis?.cljs?.core?.symbol_QMARK_,
     'js:date': (value) => value instanceof Date,
     'js:array': (value) => Array.isArray(value),
     'js:boolean': (value) => typeof value === 'boolean',
