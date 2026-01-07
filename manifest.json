@@ -18,11 +18,11 @@
     "scripting",
     "activeTab"
   ],
-  "host_permissions": ["http://localhost:3449/*", "https://design.penpot.dev/*"],
+  "host_permissions": ["http://localhost:3449/*", "https://localhost:3449/*", "https://design.penpot.dev/*"],
   "web_accessible_resources": [
     {
       "resources": ["dist/assets/fonts/*.woff2", "dist/assets/fonts/*.woff", "dist/assets/fonts/*.ttf"],
-      "matches": ["http://localhost:3449/*", "https://design.penpot.dev/*"]
+      "matches": ["http://localhost:3449/*", "https://localhost:3449/*", "https://design.penpot.dev/*"]
     }
   ]
 }

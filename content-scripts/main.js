@@ -1,5 +1,4 @@
 /* eslint-disable */
-console.log('cljs', globalThis?.cljs)
 
 // Si las DevTools no están definidas
 // pasamos a definirlas.
@@ -7,7 +6,6 @@ if (!('penpotDevTools' in window)) {
   const PATH_SEPARATOR = '/'
 
   const typeTable = {
-    'app:datetime': globalThis?.app?.util?.time?.datetime_QMARK_,
     'cljs:uuid': globalThis?.cljs?.core?.uuid_QMARK_,
     'cljs:keyword': globalThis?.cljs?.core?.keyword_QMARK_,
     'cljs:vector': globalThis?.cljs?.core?.vector_QMARK_,
@@ -42,7 +40,6 @@ if (!('penpotDevTools' in window)) {
   }
 
   const expandableTable = {
-    'app:datetime': false,
     'cljs:uuid': false,
     'cljs:keyword': false,
     'cljs:vector': true,
@@ -73,7 +70,6 @@ if (!('penpotDevTools' in window)) {
   }
 
   const valueTable = {
-    'app:datetime': (value) => cljs.core.str(value),
     'cljs:uuid': (value) => cljs.core.name(value),
     'cljs:keyword': (value) => cljs.core.name(value),
     'js:date': (value) => value.toISOString(),
